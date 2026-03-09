@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VidyaGuide AI — Career Mentor</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #06060C;
+    --card: #0E0E18;
+    --orange: #FF5C1A;
+    --gold: #FFAA00;
+    --teal: #00D4AA;
+    --blue: #2B8EFF;
+    --text: #E4E4F0;
+    --muted: rgba(255,255,255,0.35);
+    --border: rgba(255,255,255,0.07);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ── GRID ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 56px 56px;
+    pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 60px;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 800;
+    background: linear-gradient(90deg, var(--orange), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links { display: flex; gap: 32px; }
+
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: #fff; }
+
+  .nav-cta {
+    background: var(--orange);
+    color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 600;
+    padding: 10px 22px; border-radius: 100px;
+    cursor: pointer; transition: opacity 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; transform: scale(1.03); }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 90px 40px 70px;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,92,26,0.1);
+    border: 1px solid rgba(255,92,26,0.25);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 30px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(38px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  .hero h1 .accent {
+    background: linear-gradient(90deg, var(--orange), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+
+  .hero p {
+    font-size: 16px; color: var(--muted); max-width: 520px;
+    margin: 0 auto 36px; line-height: 1.8;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  .hero-btns {
+    display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+    animation: fadeDown 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), #FF8C42);
+    color: #fff; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600;
+    padding: 14px 32px; border-radius: 100px;
+    cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 0 32px rgba(255,92,26,0.3);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 48px rgba(255,92,26,0.45); }
+
+  .btn-ghost {
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    border: 1px solid var(--border);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    padding: 14px 28px; border-radius: 100px;
+    cursor: pointer; transition: border 0.2s, color 0.2s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.25); color: #fff; }
+
+  /* ── STATS STRIP ── */
+  .stats {
+    position: relative; z-index: 1;
+    display: flex; justify-content: center; flex-wrap: wrap; gap: 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin: 0 60px 70px;
+    animation: fadeDown 0.6s 0.4s ease both;
+  }
+
+  .stat {
+    flex: 1; min-width: 140px;
+    padding: 28px 24px; text-align: center;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px; font-weight: 800;
+    background: linear-gradient(90deg, var(--orange), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 4px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--muted); letter-spacing: 0.05em; }
+
+  /* ── SECTION TITLE ── */
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 3.5vw, 40px);
+    font-weight: 800; line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+
+  .section-sub {
+    font-size: 14px; color: var(--muted); line-height: 1.75; max-width: 480px;
+  }
+
+  /* ── MODULES SECTION ── */
+  .modules-section {
+    position: relative; z-index: 1;
+    padding: 0 60px 80px;
+  }
+
+  .modules-header { margin-bottom: 40px; }
+
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 18px;
+  }
+
+  .mod-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 28px;
+    cursor: pointer;
+    transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), border-color 0.2s, box-shadow 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mod-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--accent-color);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .mod-card:hover::before { opacity: 1; }
+  .mod-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.14); }
+
+  .mod-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 18px;
+  }
+
+  .mod-icon {
+    width: 46px; height: 46px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent-color) 30%, transparent);
+  }
+
+  .mod-num {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    padding: 3px 9px; border-radius: 100px;
+  }
+
+  .mod-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px; font-weight: 700;
+    margin-bottom: 6px; color: #fff;
+  }
+
+  .mod-sub {
+    font-size: 12px; color: var(--muted); margin-bottom: 18px;
+  }
+
+  .mod-lessons {
+    display: flex; flex-direction: column; gap: 7px;
+    margin-bottom: 20px;
+  }
+
+  .lesson-item {
+    display: flex; align-items: center; gap: 9px;
+    font-size: 12px; color: rgba(255,255,255,0.45);
+  }
+
+  .lesson-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--accent-color); flex-shrink: 0;
+    opacity: 0.5;
+  }
+
+  .mod-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 16px; border-top: 1px solid var(--border);
+  }
+
+  .mod-meta {
+    display: flex; gap: 12px;
+    font-size: 11px; color: var(--muted);
+  }
+
+  .mod-level {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px; border-radius: 100px;
+    background: color-mix(in srgb, var(--accent-color) 12%, transparent);
+    color: var(--accent-color);
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section {
+    position: relative; z-index: 1;
+    padding: 80px 60px;
+    background: rgba(255,255,255,0.015);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 80px;
+  }
+
+  .how-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 32px; margin-top: 48px;
+  }
+
+  .how-step {
+    display: flex; flex-direction: column; gap: 14px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .step-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px; font-weight: 800;
+    background: linear-gradient(135deg, var(--orange), var(--gold));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px; font-weight: 700;
+  }
+
+  .step-desc { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative; z-index: 1;
+    padding: 32px 60px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+  }
+
+  footer p { font-size: 12px; color: var(--muted); }
+
+  .footer-links { display: flex; gap: 20px; }
+  .footer-links a {
+    font-size: 12px; color: var(--muted);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: #fff; }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── GLOW BLOBS ── */
+  .blob {
+    position: fixed; border-radius: 50%;
+    filter: blur(120px); pointer-events: none; z-index: 0;
+  }
+  .blob-1 {
+    width: 500px; height: 500px;
+    background: rgba(255,92,26,0.06);
+    top: -100px; left: -100px;
+  }
+  .blob-2 {
+    width: 400px; height: 400px;
+    background: rgba(0,212,170,0.05);
+    bottom: 100px; right: -80px;
+  }
+
+  @media (max-width: 700px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 60px 24px 50px; }
+    .stats { margin: 0 24px 50px; }
+    .modules-section, .how-section { padding-left: 24px; padding-right: 24px; }
+    footer { padding: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🎓</div>
+    <span class="logo-text">VidyaGuide</span>
+  </div>
+  <div class="nav-links">
+    <a href="#">Modules</a>
+    <a href="#">Resume AI</a>
+    <a href="#">Career Paths</a>
+    <a href="#">About</a>
+  </div>
+  <button class="nav-cta">Get Started Free</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🤖 AI-Powered Career Platform</div>
+  <h1>
+    Your AI Mentor for<br/>
+    <span class="accent">Career & Resume</span> Success
+  </h1>
+  <p>
+    VidyaGuide is an agentic AI platform that evaluates your resume,
+    maps your career path, and builds a personalized skill roadmap — all in one place.
+  </p>
+  <div class="hero-btns">
+    <button class="btn-primary">▶ Start Learning Free</button>
+    <button class="btn-ghost">Watch Demo →</button>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-num">12K+</div><div class="stat-label">Students Guided</div></div>
+  <div class="stat"><div class="stat-num">94%</div><div class="stat-label">Resume Score Improvement</div></div>
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Learning Modules</div></div>
+  <div class="stat"><div class="stat-num">3×</div><div class="stat-label">Faster Job Placement</div></div>
+</div>
+
+<!-- MODULES -->
+<section class="modules-section">
+  <div class="modules-header">
+    <div class="section-label">Learning Modules</div>
+    <div class="section-title">Everything you need<br/>to land your dream role</div>
+    <p class="section-sub">Six AI-powered modules that take you from student to hired — step by step.</p>
+  </div>
+
+  <div class="modules-grid" id="modulesGrid"></div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Three steps to<br/>career clarity</div>
+
+  <div class="how-grid">
+    <div class="how-step" style="animation-delay:0s">
+      <div class="step-num">01</div>
+      <div class="step-title">Build Your Profile</div>
+      <div class="step-desc">Tell VidyaGuide your background, skills, and goals. The AI agent creates a rich student profile to power all recommendations.</div>
+    </div>
+    <div class="how-step" style="animation-delay:0.1s">
+      <div class="step-num">02</div>
+      <div class="step-title">Get AI Insights</div>
+      <div class="step-desc">Upload your resume. Receive an instant score, gap analysis, rewrite suggestions, and career path recommendations.</div>
+    </div>
+    <div class="how-step" style="animation-delay:0.2s">
+      <div class="step-num">03</div>
+      <div class="step-title">Learn & Execute</div>
+      <div class="step-desc">Follow your personalized learning roadmap, practice mock interviews, and build a recruiter-magnet online presence.</div>
+    </div>
+    <div class="how-step" style="animation-delay:0.3s">
+      <div class="step-num">04</div>
+      <div class="step-title">Get Hired</div>
+      <div class="step-desc">Apply with confidence. Track applications, prepare for each role with AI coaching, and negotiate your best offer.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 VidyaGuide AI · Career Planning & Resume Mentor</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+const modules = [
+  { icon: "🪪", num: "01", title: "Profile Builder", sub: "Build your career identity", color: "#FF5C1A", level: "Starter", duration: "15 min",
+    lessons: ["Academic background analysis","Identify core strengths","Set career goals","Personal value proposition"] },
+  { icon: "📄", num: "02", title: "Resume Evaluator", sub: "AI-powered resume scoring", color: "#00B4D8", level: "Core", duration: "20 min",
+    lessons: ["Resume anatomy & recruiter scan","ATS optimization & keywords","Action verbs & achievements","Fix common mistakes"] },
+  { icon: "🧭", num: "03", title: "Career Pathfinder", sub: "Discover your ideal trajectory", color: "#9B5DE5", level: "Core", duration: "25 min",
+    lessons: ["Map skills to industry demand","Explore roles in tech & beyond","Read JDs like an insider","Build a 90-day action plan"] },
+  { icon: "⚡", num: "04", title: "Skill Gap Analyzer", sub: "Know exactly what to learn", color: "#06D6A0", level: "Advanced", duration: "18 min",
+    lessons: ["Current skills audit","Industry-specific skill matrices","Prioritize learning by ROI","Curated resource recommendations"] },
+  { icon: "🎤", num: "05", title: "Interview Simulator", sub: "Practice with AI feedback", color: "#FFB703", level: "Advanced", duration: "30 min",
+    lessons: ["STAR method for behavioral Q","Technical prep strategies","AI mock interview session","Salary negotiation basics"] },
+  { icon: "🌐", num: "06", title: "LinkedIn & Portfolio", sub: "Build your digital presence", color: "#E63946", level: "Advanced", duration: "22 min",
+    lessons: ["LinkedIn profile optimization","Writing a magnetic About section","Portfolio structure best practices","Networking outreach templates"] },
+];
+
+const grid = document.getElementById('modulesGrid');
+
+modules.forEach((m, i) => {
+  const card = document.createElement('div');
+  card.className = 'mod-card';
+  card.style.setProperty('--accent-color', m.color);
+  card.style.animationDelay = `${i * 0.08}s`;
+  card.style.animation = `fadeUp 0.5s ${i * 0.08}s ease both`;
+
+  card.innerHTML = `
+    <div class="mod-top">
+      <div class="mod-icon" style="--accent-color:${m.color}">${m.icon}</div>
+      <span class="mod-num">Module ${m.num}</span>
+    </div>
+    <div class="mod-title">${m.title}</div>
+    <div class="mod-sub">${m.sub}</div>
+    <div class="mod-lessons">
+      ${m.lessons.map(l => `
+        <div class="lesson-item">
+          <div class="lesson-dot" style="background:${m.color}"></div>
+          ${l}
+        </div>
+      `).join('')}
+    </div>
+    <div class="mod-footer">
+      <div class="mod-meta">
+        <span>⏱ ${m.duration}</span>
+        <span>📚 4 lessons</span>
+      </div>
+      <span class="mod-level" style="--accent-color:${m.color}">${m.level}</span>
+    </div>
+  `;
+
+  card.addEventListener('mouseenter', () => {
+    card.style.boxShadow = `0 12px 40px ${m.color}22`;
+  });
+  card.addEventListener('mouseleave', () => {
+    card.style.boxShadow = 'none';
+  });
+
+  grid.appendChild(card);
+});
+</script>
+</body>
+</html>
